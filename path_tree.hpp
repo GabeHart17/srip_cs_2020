@@ -4,9 +4,7 @@
 #include <vector>
 #include <array>
 #include <cmath>
-
-template<size_t DIMS>
-using Point = std::array<double, DIMS>;
+#include "point.hpp"
 
 
 template<size_t DIMS>
