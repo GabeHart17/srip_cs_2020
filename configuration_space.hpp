@@ -9,8 +9,8 @@ class ConfigurationSpace {
 public:
   ConfigurationSpace();
   ~ConfigurationSpace() {}
-  bool is_free(Point<DIMS>) const;  // true if point is in free space
-  bool is_unobstructed(Point<DIMS>, Point<DIMS>) const;  // true if line of sight between points
+  bool is_free(const Point<DIMS>&) const;  // true if point is in free space
+  bool is_unobstructed(const Point<DIMS>&, const Point<DIMS>&) const;  // true if line of sight between points
   Point<DIMS> random() const;  // random point in unobstructed space
 };
 
