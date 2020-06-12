@@ -14,11 +14,14 @@ private:
   PathTree<DIMS>* pt;
   KDTree<DIMS> kdt;
   ConfigurationSpace<DIMS> csp;
+  std::vector<PathTree<DIMS>* > goal_nodes;  // nodes that have reached the goal
+  Point<DIMS> goal;
+  double goal_radius;  // radius around which a point is considered to have reached the goal
 
   double shrinking_ball_radius(double eta) const {
     double gamma = pow(2, DIMS) * (1 + 1 / DIMS) * csp.lebesgue();
     double res = pow(gamma * (log(tree_size) / tree_size), 1 / DIMS);
-    return std::min(res, eta);
+    return fmin(res, eta);
   }
 
   Point<DIMS> steer_(const Point<DIMS>& origin, const Point<DIMS>& target, double delta) {
@@ -48,6 +51,9 @@ private:
       p_new->parent = best;
       best->children.push_back(p_new);
       tree_size++;
+      if (dist(p_new->point, goal) < goal_radius) {
+        goal_nodes.push_back(p_new);
+      }
       rewire_neighbors_(*p_new, near);
     }
   }
@@ -78,11 +84,40 @@ private:
   }
 
 public:
-  RRTStarPlanner(ConfigurationSpace<DIMS> c): csp(c), tree_size(0) {}
+  RRTStarPlanner(ConfigurationSpace<DIMS> c): csp(c), pt(nullptr) {}
   ~RRTStarPlanner() {
     delete pt;
   }
-  std::vector<Point<DIMS> > path(const Point<DIMS>&, const Point<DIMS>&, double);
+  std::vector<Point<DIMS> > path(Point<DIMS> start_pt, Point<DIMS> goal_pt,
+                                 unsigned int iterations, double r) {
+    goal = goal_pt;
+    goal_radius = r;
+    tree_size = 0;
+    goal_nodes.clear();
+    if (pt != nullptr) delete pt;
+    pt = new PathTree<DIMS>(start_pt);
+    kdt = KDTree<DIMS>(pt);
+    build_tree_(iterations);
+    double best_cost = INFINITY;
+    PathTree<DIMS>* best = nullptr;
+    std::vector<Point<DIMS> > r_res;
+    if (goal_nodes.empty()) return r_res;
+    for (PathTree<DIMS>* p : goal_nodes) {
+      if (p->cost < best_cost) {
+        best_cost = p->cost;
+        best = p;
+      }
+    }
+    while (best != nullptr) {
+      r_res.push_back(best->point);
+      best = best->parent;
+    }
+    std::vector<Point<DIMS> > res;
+    for (typename std::vector<Point<DIMS> >::reverse_iterator i = r_res.rbegin(); i != r_res.rend(); i++) {
+      res.push_back(*i);
+    }
+    return res;
+  }
 };
 
 #endif
