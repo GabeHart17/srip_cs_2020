@@ -24,7 +24,7 @@ private:
     return fmin(res, eta);
   }
 
-  Point<DIMS> steer_(const Point<DIMS>& origin, const Point<DIMS>& target, double delta) {
+  static Point<DIMS> steer_(const Point<DIMS>& origin, const Point<DIMS>& target, double delta) {
     double s = delta / dist(origin, target);
     Point<DIMS> res = {};
     for (size_t i = 0; i < DIMS; i++) {

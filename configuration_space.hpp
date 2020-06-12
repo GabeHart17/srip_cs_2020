@@ -7,12 +7,12 @@
 template <size_t DIMS>
 class ConfigurationSpace {
 public:
-  ConfigurationSpace();
-  ~ConfigurationSpace() {}
-  bool is_free(const Point<DIMS>&) const;  // true if point is in free space
-  bool is_unobstructed(const Point<DIMS>&, const Point<DIMS>&) const;  // true if line of sight between points
-  Point<DIMS> random() const;  // random point in unobstructed space
-  double lebesgue() const;  // the lebesgue measure of the unobstructed space
+  ConfigurationSpace() {}
+  virtual ~ConfigurationSpace() {}
+  virtual bool is_free(const Point<DIMS>&) const {}  // true if point is in free space
+  virtual bool is_unobstructed(const Point<DIMS>&, const Point<DIMS>&) const {}  // true if line of sight between points
+  virtual Point<DIMS> random() const {}  // random point in unobstructed space
+  virtual double lebesgue() const {}  // the lebesgue measure of the unobstructed space
 };
 
 #endif
