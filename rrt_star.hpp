@@ -18,7 +18,7 @@ private:
   double shrinking_ball_radius(double eta) const {
     double gamma = pow(2, DIMS) * (1 + 1 / DIMS) * csp.lebesgue();
     double res = pow(gamma * (log(tree_size) / tree_size), 1 / DIMS);
-    return min(res, eta);
+    return std::min(res, eta);
   }
 
   Point<DIMS> steer_(const Point<DIMS>& origin, const Point<DIMS>& target, double delta) {
@@ -78,7 +78,7 @@ private:
   }
 
 public:
-  RRTStarPlanner(ConfigurationSpace<DIMS> c): csp(c), tree_size(0),  {}
+  RRTStarPlanner(ConfigurationSpace<DIMS> c): csp(c), tree_size(0) {}
   ~RRTStarPlanner() {
     delete pt;
   }
