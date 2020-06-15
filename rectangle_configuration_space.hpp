@@ -80,7 +80,7 @@ public:
     for (Rectangle r : obstacles) {
       if (r.obstructs(p0, p1)) return false;
     }
-    return true;
+    return space.contains(p0) && space.contains(p1);
   }
 
   Point<2> random() const {
