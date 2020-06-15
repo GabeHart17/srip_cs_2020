@@ -11,11 +11,11 @@ template<size_t DIMS>
 class KDTree {
 private:
   struct KDNode {
-    PathTree<DIMS>& pt;
+    PathTree<DIMS>* const pt;
     KDNode* smaller;
     KDNode* greater;
     KDNode* parent;
-    KDNode(PathTree<DIMS>& n, KDNode* p): pt(n), parent(p), smaller(nullptr), greater(nullptr) {}
+    KDNode(PathTree<DIMS>* n, KDNode* p): pt(n), parent(p), smaller(nullptr), greater(nullptr) {}
     ~KDNode() {
       delete smaller;
       delete greater;
@@ -25,16 +25,16 @@ private:
   KDNode* root_;
 
   KDNode* nearest_helper_(const Point<DIMS>& p, KDNode* r, size_t axis) const {
-    double d_r = dist(p, r->pt.point);
+    double d_r = dist(p, r->pt->point);
     double d_s = 0;
     double d_g = 0;
     unsigned char children = 0; // 1s bit is presence of smaller child, 2s is greater
     if (r->smaller != nullptr) {
-      d_s = dist(p, r->smaller->pt.point);
+      d_s = dist(p, r->smaller->pt->point);
       children += 1;
     }
     if (r->greater != nullptr) {
-      d_g = dist(p, r->greater->pt.point);
+      d_g = dist(p, r->greater->pt->point);
       children += 2;
     }
     if (!children) {
@@ -42,14 +42,14 @@ private:
     }
     bool side = ((children == 3) && (d_s < d_g)) || (children == 2);  // true if closer to smaller, false if closer to greater
     KDNode* side_res = nearest_helper_(p, side ? r->smaller : r-> greater, (axis + 1) % DIMS);
-    double side_dist = dist(p, side_res->pt.point);
-    if (side_dist <= dist_axis(p, r->pt.point, axis)) {
+    double side_dist = dist(p, side_res->pt->point);
+    if (side_dist <= dist_axis(p, r->pt->point, axis)) {
       return side_res;
     } else if (children < 3) {
       return side_dist < d_r ? side_res : r;
     } else {
       KDNode* other_res = nearest_helper_(p, side ? r-> greater : r->smaller, (axis + 1) % DIMS);
-      double other_dist = dist(p, other_res->pt.point);
+      double other_dist = dist(p, other_res->pt->point);
       unsigned char best = (side_dist < d_r && side_dist < other_dist) +
                            2 * (other_dist < d_r && other_dist < side_dist);  // 0 for local root, 1 for side, 2 for other
       switch (best) {
@@ -66,13 +66,13 @@ private:
   void near_helper_(const Point<DIMS>& p, double radius, std::vector<PathTree<DIMS>* >& v, KDNode* r, size_t axis) const {
     bool continue_s = false;
     bool continue_g = false;
-    if (dist(p, r->pt.point) < radius) {
-      v.push_back(&(r->pt));
+    if (dist(p, r->pt->point) < radius) {
+      v.push_back(r->pt);
     }
-    if (dist_axis(p, r->pt.point, axis) < radius) {
+    if (dist_axis(p, r->pt->point, axis) < radius) {
       continue_s = true;
       continue_g = true;
-    } else if (p[axis] > r->pt.point[axis]) {
+    } else if (p[axis] > r->pt->point[axis]) {
       continue_g = true;
     } else {
       continue_s = true;
@@ -90,7 +90,7 @@ public:
     root_ = nullptr;
   }
 
-  KDTree(PathTree<DIMS>& root) {
+  KDTree(PathTree<DIMS>* root) {
     root_ = new KDNode(root, nullptr);
   }
 
@@ -103,9 +103,9 @@ public:
     KDNode* parent = root_;
     size_t axis = 0;
     while (true) {
-      KDNode* branch = (parent->pt.point)[axis] < p.point[axis] ? parent->greater : parent->smaller;
+      KDNode* branch = (parent->pt->point)[axis] < p.point[axis] ? parent->greater : parent->smaller;
       if (branch == nullptr) {
-        ((parent->pt.point)[axis] < p.point[axis] ? parent->greater : parent->smaller) =
+        ((parent->pt->point)[axis] < p.point[axis] ? parent->greater : parent->smaller) =
           new KDNode(p, parent);
         return;
       } else {
@@ -117,7 +117,7 @@ public:
   }
 
   const PathTree<DIMS>& nearest(const Point<DIMS>& p) const {
-    return nearest_helper_(p, root_, 0)->pt;
+    return *nearest_helper_(p, root_, 0)->pt;
   }
 
   void remove(const Point<DIMS>& p) {
@@ -134,7 +134,7 @@ public:
   //   std::vector<Point<DIMS> > res;
   //   KDNode* n = nearest(p);
   //   while (n != nullptr) {
-  //     res.push_back(n->pt.point);
+  //     res.push_back(n->pt->point);
   //     n = n->parent;
   //   }
   //   std::vector<Point<DIMS> > r_res;

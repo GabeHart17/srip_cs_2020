@@ -91,12 +91,11 @@ public:
 
   std::vector<Point<DIMS> > path(Point<DIMS> start_pt, Point<DIMS> goal_pt,
                                  unsigned int iterations, double goal_radius, double eta) {
-    goal = goal_pt;
     tree_size = 0;
     goal_nodes.clear();
     if (pt != nullptr) delete pt;
     pt = new PathTree<DIMS>(start_pt);
-    kdt = KDTree<DIMS>(*pt);
+    kdt = KDTree<DIMS>(pt);
     build_tree_(iterations, eta);
     double best_cost = INFINITY;
     PathTree<DIMS>* best = nullptr;
