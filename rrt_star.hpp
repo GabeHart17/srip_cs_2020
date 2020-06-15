@@ -28,11 +28,10 @@ private:
     double s = eta / dist(origin, target);
     Point<DIMS> res = {};
     for (size_t i = 0; i < DIMS; i++) {
-      res[i] = s * (target[i] - origin[i]);
+      res[i] = s * (target[i] - origin[i]) + origin[i];
     }
     return res;
   }
-
   void explore_(double eta) {
     Point<DIMS> sample = csp->random();
     PathTree<DIMS>* p_new = new PathTree<DIMS>(steer_(kdt.nearest(sample).point, sample, eta));
@@ -95,7 +94,8 @@ public:
     goal_nodes.clear();
     if (pt != nullptr) delete pt;
     pt = new PathTree<DIMS>(start_pt);
-    kdt = KDTree<DIMS>(pt);
+    KDTree<DIMS> new_kdt(pt);
+    kdt = new_kdt;
     build_tree_(iterations, eta);
     double best_cost = INFINITY;
     PathTree<DIMS>* best = nullptr;
