@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <vector>
+#include <random>
 #include "configuration_space.hpp"
 
 #define _USE_MATH_DEFINES
@@ -58,12 +59,18 @@ private:
   Rectangle space;
   std::vector<Rectangle> obstacles;
   double free_area;
+  std::mt19937 rng;
+  std::uniform_real_distribution<double> x_dist;
+  std::uniform_real_distribution<double> y_dist;
 public:
   RectangleConfigurationSpace(Rectangle s, std::vector<Rectangle> obs): space(s), obstacles(obs) {
     free_area = space.area;
     for (Rectangle r: obstacles) {
       free_area -= r.area;
     }
+    rng = std::mt19937(0);  // using constant seed for replicable results
+    x_dist = std::uniform_real_distribution<double>(space.smaller[0], space.greater[0]);
+    y_dist = std::uniform_real_distribution<double>(space.smaller[1], space.greater[1]);
   }
 
   ~RectangleConfigurationSpace() override {}
@@ -83,10 +90,11 @@ public:
     return space.contains(p0) && space.contains(p1);
   }
 
-  Point<2> random() const {
-    Point<2> p = {0, 0};
+  // a random point in the space, not guaranteed to be free
+  Point<2> random() override {
+    Point<2> p = {x_dist(rng), y_dist(rng)};
     return p;
-  }  // placeholder
+  }
 
   double lebesgue() const override { return free_area; }
 };
