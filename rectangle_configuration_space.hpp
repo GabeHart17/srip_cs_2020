@@ -54,7 +54,7 @@ public:
 };
 
 
-class RectangleConfigurationSpace : ConfigurationSpace<2> {
+class RectangleConfigurationSpace : public ConfigurationSpace<2> {
 private:
   Rectangle space;
   std::vector<Rectangle> obstacles;

@@ -15,7 +15,7 @@ private:
     KDNode* smaller;
     KDNode* greater;
     KDNode* parent;
-    KDNode(const PathTree<DIMS>& n, KDNode* p): pt(n), parent(p), smaller(nullptr), greater(nullptr) {}
+    KDNode(PathTree<DIMS>& n, KDNode* p): pt(n), parent(p), smaller(nullptr), greater(nullptr) {}
     ~KDNode() {
       delete smaller;
       delete greater;
@@ -63,11 +63,11 @@ private:
     }
   }
 
-  void near_helper_(const Point<DIMS>& p, double radius, std::vector<PathTree<DIMS>& >& v, KDNode* r, size_t axis) const {
+  void near_helper_(const Point<DIMS>& p, double radius, std::vector<PathTree<DIMS>* >& v, KDNode* r, size_t axis) const {
     bool continue_s = false;
     bool continue_g = false;
     if (dist(p, r->pt.point) < radius) {
-      v.push_back(r->pt);
+      v.push_back(&(r->pt));
     }
     if (dist_axis(p, r->pt.point, axis) < radius) {
       continue_s = true;
@@ -116,7 +116,7 @@ public:
     }
   }
 
-  PathTree<DIMS>& nearest(const Point<DIMS>& p) const {
+  const PathTree<DIMS>& nearest(const Point<DIMS>& p) const {
     return nearest_helper_(p, root_, 0)->pt;
   }
 
@@ -145,9 +145,10 @@ public:
   // }
 
   // all nodes within radius r of p
-  std::vector<PathTree<DIMS>& > near(const Point<DIMS>& p, double r) const {
-    std::vector<Point<DIMS> > res;
-    return near_helper_(p, r, res, root_, 0);
+  std::vector<PathTree<DIMS>* > near(const Point<DIMS>& p, double r) const {
+    std::vector<PathTree<DIMS>* > res;
+    near_helper_(p, r, res, root_, 0);
+    return res;
   }
 };
 
