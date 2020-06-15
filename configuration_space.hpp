@@ -9,10 +9,10 @@ class ConfigurationSpace {
 public:
   ConfigurationSpace() {}
   virtual ~ConfigurationSpace() {}
-  virtual bool is_free(const Point<DIMS>&) const {}  // true if point is in free space
-  virtual bool is_unobstructed(const Point<DIMS>&, const Point<DIMS>&) const {}  // true if line of sight between points
-  virtual Point<DIMS> random() const {}  // random point in unobstructed space
-  virtual double lebesgue() const {}  // the lebesgue measure of the unobstructed space
+  virtual bool is_free(const Point<DIMS>&) const = 0;  // true if point is in free space
+  virtual bool is_unobstructed(const Point<DIMS>&, const Point<DIMS>&) const = 0;  // true if line of sight between points
+  virtual Point<DIMS> random() const = 0;  // random point in unobstructed space
+  virtual double lebesgue() const = 0; // the lebesgue measure of the unobstructed space
 };
 
 #endif
