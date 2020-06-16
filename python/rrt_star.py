@@ -14,7 +14,8 @@ class TreeNode:
 
 
 class RRTStar:
-    def __init__(self):
+    def __init__(self, configuration_space):
+        self.space = configuration_space
         self.tree = []
         self.goal_nodes = []
         self.goal = [0.0, 0.0]
@@ -87,3 +88,14 @@ class RRTStar:
                 near_helper(self.tree[root].kd_greater, (axis + 1) % 2)
         near_helper(0, 0)
         return res
+
+    def shrinking_ball_radius(eta):
+        gamma = 6 * self.space.lebesgue()  # pow(2, DIMS) * (1 + 1 / DIMS) * csp->lebesgue()
+        res = pow(gamma * (log(len(self.tree)) / len(self.tree)), 0.5)  # pow(gamma * (log(tree_size) / tree_size), 1 / DIMS)
+        return min(res, eta)
+
+    def explore(self):
+        pass
+
+    def rewire_neighbors(self, new_node):
+        pass
