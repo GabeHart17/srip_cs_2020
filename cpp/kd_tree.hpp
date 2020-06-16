@@ -99,13 +99,13 @@ public:
   }
 
 
-  void insert(const PathTree<DIMS>& p) {
+  void insert(PathTree<DIMS>* p) {
     KDNode* parent = root_;
     size_t axis = 0;
     while (true) {
-      KDNode* branch = (parent->pt->point)[axis] < p.point[axis] ? parent->greater : parent->smaller;
+      KDNode* branch = (parent->pt->point)[axis] < p->point[axis] ? parent->greater : parent->smaller;
       if (branch == nullptr) {
-        ((parent->pt->point)[axis] < p.point[axis] ? parent->greater : parent->smaller) =
+        ((parent->pt->point)[axis] < p->point[axis] ? parent->greater : parent->smaller) =
           new KDNode(p, parent);
         return;
       } else {
