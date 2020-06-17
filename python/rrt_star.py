@@ -126,12 +126,13 @@ class RRTStar:
         if best is not None:
             new_node.cost = best_cost
             self.tree.append(new_node)
-            self.connect(p, new_node)
+            self.connect(best, new_node)
             self.rewire_neighbors(new_node)
             self.kd_insert(new_node);  # insert after rewire, so new node doesn't come up in near search
             if (RRTStar.distance(new_node.point, self.goal) < self.goal_radius and
                 self.space.is_unobstructed(new_node.point, self.goal)):
                 self.goal_nodes.append(new_node)
+            # print(new_node.parent.cost, new_node.cost)
 
     def is_ancestor(self, child, other):
         current = child
@@ -143,13 +144,13 @@ class RRTStar:
 
     def rewire_neighbors(self, new_node):
         for n in self.near(new_node.point, self.shrinking_ball_radius()):
-            if not self.is_ancestor(new_node, n):
-                prospective_cost = new_node.cost + RRTStar.distance(new_node.point, n.point)
-                if prospective_cost < n.cost:
-                    self.disconnect(n.parent, n)
-                    self.connect(new_node, n)
-                    n.cost = prospective_cost
-                    self.cascade_cost(n)
+            prospective_cost = new_node.cost + RRTStar.distance(new_node.point, n.point)
+            if prospective_cost < n.cost:
+                self.disconnect(n.parent, n)
+                self.connect(new_node, n)
+                n.cost = prospective_cost
+                self.cascade_cost(n)
+                # print(new_node.cost < n.cost)
 
     def build_tree(self, start, goal, goal_radius, iterations):
         self.goal_nodes = []

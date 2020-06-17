@@ -37,9 +37,9 @@ class ConfigurationSpace:
     def is_unobstructed(self, start, end):
         if not self.is_free(start) or not self.is_free(end):
             return False
-        for obs in self.obstacles:
-            vertices = [[obs[0], obs[1]], [obs[2], obs[1]], [obs[2], obs[3]], [obs[0], obs[3]]]
-            for i in range(4):
-                if ConfigurationSpace.intersects(start, end, vertices[i], vertices[i-1]):
-                    return False
+        # for obs in self.obstacles:
+        #     vertices = [[obs[0], obs[1]], [obs[2], obs[1]], [obs[2], obs[3]], [obs[0], obs[3]]]
+        #     for i in range(4):
+        #         if ConfigurationSpace.intersects(start, end, vertices[i], vertices[i-1]):
+        #             return False
         return True
