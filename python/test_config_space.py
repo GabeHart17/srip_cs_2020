@@ -15,3 +15,12 @@ print(space.is_free(p0), space.is_free(p1), space.is_free(p2), space.is_free(p4)
 print(space.is_unobstructed(p0, p1))
 print(space.is_unobstructed(p1, p2))
 print(space.is_unobstructed(p1, p3))
+
+# a = [0.0, 0.0]
+# b = [0.0, 1.0]
+# c = [1.0, 0.0]
+# d = [1.0, 1.0]
+# e = [0.1, 0.1]
+# print(ConfigurationSpace.intersects(a, d, b, c))
+# print(ConfigurationSpace.intersects(a, e, b, c))
+# print(ConfigurationSpace.intersects(a, b, c, d))

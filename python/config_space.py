@@ -17,8 +17,8 @@ class ConfigurationSpace:
     def contains(rect, point):
         return rect[0] <= point[0] <= rect[2] and rect[1] <= point[1] <= rect[3]
 
-    def intersects(seg0s, seg0e, seg1s, seg1e):
-        points = [seg0s, seg0e, seg1s, seg1e]
+    def intersects(a0, a1, b0, b1):  # endpoints of segments a and b
+        points = [a0, b0, a1, b1]
         for i in range(4):
             angle0 = math.atan2(points[i-1][0] - points[i][0], points[i-1][1] - points[i][1])
             angle1 = math.atan2(points[(i+1)%4][0] - points[i][0], points[(i+1)%4][1] - points[i][1])
