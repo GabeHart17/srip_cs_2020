@@ -2,7 +2,7 @@ from rrt_star import RRTStar, TreeNode
 import random
 
 
-rrts = RRTStar()
+rrts = RRTStar(None, 0)
 root = TreeNode([8.0, 8.0])
 rrts.tree.append(root)
 rrts.tree.append(TreeNode([4.0, 5.0]))
@@ -15,6 +15,8 @@ rrts.kd_insert(rrts.tree[3]);
 rrts.kd_insert(rrts.tree[4]);
 print(rrts.nearest([9.0, 5.1]))
 print([str(i) for i in rrts.near([9, 5.5], 2.0)])
+print(rrts.nearest([8.2, 8.5]))
+print([str(i) for i in rrts.near([6.0, 6.5], 3.0)])
 print()
 for i in rrts.tree:
     print(i.point, i.kd_parent, i.kd_smaller, i.kd_greater)
