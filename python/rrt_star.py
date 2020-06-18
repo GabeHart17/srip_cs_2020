@@ -43,7 +43,8 @@ class RRTStar:
         return abs(point1[axis] - point2[axis])
 
     def steer(self, start, target):
-        return [start[i] + (target[i] - start[i]) * (self.eta / RRTStar.distance(start, target)) for i in range(len(start))]
+        ext = [start[i] + (target[i] - start[i]) * (self.eta / RRTStar.distance(start, target)) for i in range(len(start))]
+        return ext if RRTStar.distance(ext, start) < RRTStar.distance(target, start) else target
 
     def kd_insert(self, node):
         parent = self.tree[0]
