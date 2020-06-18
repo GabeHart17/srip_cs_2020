@@ -46,3 +46,29 @@ class ConfigurationSpace:
                 if intersects_horizontal(obs[1], obs[0], obs[2]) or intersects_horizontal(obs[3], obs[0], obs[2]):
                     return False
         return True
+
+
+class DynamicObstacle:
+    def __init__(self, init_bounds, rate = 1.0):
+        self.bounds = init_bounds
+        self.target = [0.0, 0.0]
+        self.reached_target = True
+        self.rate = rate
+
+    def __getitem__(self, i):  # allows use in place of a list or tuple as an obstacle
+        return self.bounds[i]
+
+    def center(self):
+        return [(bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2]
+
+    def update(self):
+        if not self.reached_target:
+            xr = target[0] - center[0]
+            yr = target[1] - center[1]
+            r = self.rate / math.hypot(xr, yr)
+            self.bounds[0] += xr * r
+            self.bounds[1] += yr * r
+            self.bounds[2] += xr * r
+            self.bounds[3] += yr * r
+            if xr * (target[0] - center[0]) < 0 or yr * (target[1] < center[1]) < 0:
+                self.reached_target = True
