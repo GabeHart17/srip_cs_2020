@@ -12,7 +12,7 @@ space = ConfigurationSpace(bounds, obstacles)
 p0 = [0.5, 0.5]
 p1 = [7.5, 6.0]
 planner = RRTStar(space, 0.25)
-planner.build_tree(p0, p1, 0.5, 10000)
+planner.build_tree(p0, p1, 0.5, 5000)
 # for i in planner.tree:
 #     print(i, i.parent)
 print(len(planner.goal_nodes))
